@@ -1,19 +1,16 @@
 pipeline {
     agent {
         node {
-            label 'maven'  // Ensure the 'maven' label corresponds to a valid Jenkins agent node
+            label 'maven'
         }
     }
-    environment {
-        PATH = "/opt/apache-maven-3.9.9/bin:$PATH" 
-    }
+environment {
+    PATH = "/opt/apache-maven-3.9.9/bin:$PATH"
+}
     stages {
         stage("build") {
             steps {
-                script {
-                    sh 'mvn clean install'
-                }
-                
+                sh 'mvn clean deploy'
             }
         }
     }
