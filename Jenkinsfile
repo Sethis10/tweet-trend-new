@@ -1,4 +1,6 @@
 def registry = 'https://ssdev.jfrog.io/'
+def imageName = 'ssdev.jfrog.io/valaxy-docker-local/ttrend'
+def version   = '2.1.2'
 pipeline {
     agent {
         node {
@@ -39,6 +41,28 @@ pipeline {
                     echo '<--------------- Jar Publish Ended --------------->'
                 }
             }
+        }
+
+        stage(" Docker Build ") {
+            steps {
+                script {
+                    echo '<--------------- Docker Build Started --------------->'
+                    app = docker.build(imageName+":"+version)
+                    echo '<--------------- Docker Build Ends --------------->'
+                }
+            }
+        }
+
+        stage (" Docker Publish "){
+            steps {
+                script {
+                    echo '<--------------- Docker Publish Started --------------->'  
+                    docker.withRegistry(registry, '4fc0532f-db91-4657-ab5a-e5bc27c67614'){
+                    app.push()
+                }    
+                    echo '<--------------- Docker Publish Ended --------------->'  
+                }
+             }
         }
     }
 }
