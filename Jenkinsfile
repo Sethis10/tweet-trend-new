@@ -9,38 +9,36 @@ pipeline {
         PATH = "/opt/apache-maven-3.9.9/bin:$PATH"  // Ensure this is correct
     }
     stages {
-        stage("build") {
+        stage("Build") {
             steps {
-                echo "------------- build started -----------"
+                echo "------------- Build Started -----------"
                 sh 'mvn clean deploy -Dmaven.test.skip=true'  // Corrected Maven command
-                echo "------------- build completed ---------"
+                echo "------------- Build Completed ---------"
             }
         }
-    }
-}
-
-    stage("Jar Publish") {
-        steps {
-            script {
+        stage("Jar Publish") {
+            steps {
+                script {
                     echo '<--------------- Jar Publish Started --------------->'
-                     def server = Artifactory.newServer url:registry+"/artifactory" ,  credentialsId:"4fc0532f-db91-4657-ab5a-e5bc27c67614"
-                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}";
-                     def uploadSpec = """{
+                    def server = Artifactory.newServer url: "${registry}artifactory", credentialsId: "4fc0532f-db91-4657-ab5a-e5bc27c67614"
+                    def properties = "buildid=${env.BUILD_ID},commitid=${env.GIT_COMMIT}"
+                    def uploadSpec = """{
                           "files": [
                             {
                               "pattern": "jarstaging/(*)",
                               "target": "libs-release-local/{1}",
                               "flat": "false",
-                              "props" : "${properties}",
-                              "exclusions": [ "*.sha1", "*.md5"]
+                              "props": "${properties}",
+                              "exclusions": ["*.sha1", "*.md5"]
                             }
-                         ]
+                          ]
                      }"""
-                     def buildInfo = server.upload(uploadSpec)
-                     buildInfo.env.collect()
-                     server.publishBuildInfo(buildInfo)
-                     echo '<--------------- Jar Publish Ended --------------->'  
-            
+                    def buildInfo = server.upload(uploadSpec)
+                    buildInfo.env.collect()
+                    server.publishBuildInfo(buildInfo)
+                    echo '<--------------- Jar Publish Ended --------------->'
+                }
             }
-        }   
+        }
     }
+}
