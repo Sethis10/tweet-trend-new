@@ -1,6 +1,4 @@
-//def registry = 'https://ssdev.jfrog.io/'
-//def imageName = 'ssdev.jfrog.io/valaxy-docker-local/ttrend'
-//def version   = '2.1.2'
+def registry = 'https://ssdev.jfrog.io/'
 pipeline {
     agent {
         node {
@@ -20,12 +18,13 @@ pipeline {
         }
     }
 }
-        /*
+        
         stage("Jar Publish") {
             steps {
                 script {
                     echo '<--------------- Jar Publish Started --------------->'
-                    def server = Artifactory.newServer url: "${registry}artifactory", credentialsId: "4fc0532f-db91-4657-ab5a-e5bc27c67614"
+                    def server = Artifactory.newServer url: "${registry}artifactory", credentialsId: "jfrog-jenkins-cred
+"
                     def properties = "buildid=${env.BUILD_ID},commitid=${env.GIT_COMMIT}"
                     def uploadSpec = """{
                           "files": [
@@ -45,7 +44,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage(" Docker Build ") {
             steps {
                 script {
